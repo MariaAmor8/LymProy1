@@ -58,7 +58,6 @@ SKIP:
 
 TOKEN: /* Nombres de Comandos */
 {
-
          <JUMP: "jump" >
         | <WALK: "walk" >
         | <LEAP: "leap" >
