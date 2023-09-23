@@ -164,6 +164,7 @@ boolean command(Console sistema): //command es nuestro main
 		   simpleCommand()
 		| <DEFPROC><STR> (("("((<STR>|<NUM>)(","(<STR>|<NUM>))*)*")")|("()"))  "{"block()"}"
 		| 	<DEFVAR><STR>x=num()
+		| conditional()
 
 		) 
 
@@ -235,6 +236,7 @@ void jump():
 void walk():
 	{
 	  int x;
+	  boolean facing;
 	}
 	{
 	  x=num()
@@ -245,13 +247,45 @@ void walk():
 	   (
 	     <FRONT>{world.moveForward(x, false);salida = "Command: Walk F";}
 	   | <BACK>{world.moveForward(-x, false);salida = "Command: Walk B";}
-	   | <RIGHT>{world.moveForward(x, false);salida = "Command: Walk R";}
-	   | <LEFT>{world.moveForward(-x, false);salida = "Command: Walk L";}
+	   | <RIGHT>{world.moveHorizontally(x, false);salida = "Command: Walk R";}
+	   | <LEFT> {world.moveHorizontally(-x, false);salida = "Command: Walk L"; }
 	   
-	   | <NORTH>{world.moveVertically(-x, false);salida = "Command: Walk N";}
-	   | <SOUTH>{world.moveVertically(x, false);salida = "Command: Walk S";}
-	   |<EAST>{world.moveHorizontally(x, false);salida = "Command: Walk E";}
-	   | <WEST>{world.moveHorizontally(-x, false);salida = "Command: Walk W";}	   )")"
+	   | <NORTH>
+	   { facing = world.facingNorth();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingNorth();
+	   		}
+	     world.moveForward(x, false);
+	     salida = "Command: Walk N";
+	     }
+	   | <SOUTH>
+	   { facing = world.facingSouth();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingSouth();
+	   		}
+	     world.moveForward(x, false);
+	     salida = "Command: Walk S";
+	     }
+	   |<EAST>
+	   { facing = world.facingEast();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingEast();
+	   		}
+	     world.moveForward(x, false);
+	     salida = "Command: Walk E";
+	     }
+	   | <WEST>
+	   { facing = world.facingWest();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingWest();
+	   		}
+	     world.moveForward(x, false);
+	     salida = "Command: Walk W";
+	     }	   )")"
 	  
 	  )
 	  )
@@ -261,6 +295,7 @@ void walk():
 void leap():
 {
 	  int x;
+	  boolean facing;
 	}
 	{
 	  x=num()
@@ -272,34 +307,96 @@ void leap():
 	   (
 	     <FRONT>{world.moveForward(x, true);salida = "Command: Leap F";}
 	   | <BACK>{world.moveForward(-x, true);salida = "Command: Leap B";}
-	   | <RIGHT>{world.moveForward(x, true);salida = "Command: Leap R";}
-	   | <LEFT>{world.moveForward(-x, true);salida = "Command: Leap L";}
+	   | <RIGHT>{world.moveHorizontally(x, true);salida = "Command: Leap R";}
+	   | <LEFT> {world.moveHorizontally(-x, true);salida = "Command: Leap L"; }
 	   
-	   | <NORTH>{world.moveVertically(-x, true);salida = "Command: Leap N";}
-	   | <SOUTH>{world.moveVertically(x, true);salida = "Command: Leap S";}
-	   |<EAST>{world.moveHorizontally(x, true);salida = "Command: Leap E";}
-	   | <WEST>{world.moveHorizontally(-x, true);salida = "Command: Leap W";}
+	   | <NORTH>
+	   { facing = world.facingNorth();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingNorth();
+	   		}
+	     world.moveForward(x, true);
+	     salida = "Command: Leap N";
+	     }
+	   | <SOUTH>
+	   { facing = world.facingSouth();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingSouth();
+	   		}
+	     world.moveForward(x, true);
+	     salida = "Command: Leap S";
+	     }
+	   |<EAST>
+	   { facing = world.facingEast();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingEast();
+	   		}
+	     world.moveForward(x, true);
+	     salida = "Command: Leap E";
+	     }
+	   | <WEST>
+	   { facing = world.facingWest();
+	 	while(facing == false)
+	 		{world.turnRight();
+	    	facing = world.facingWest();
+	   		}
+	     world.moveForward(x, true);
+	     salida = "Command: Leap W";
+	     }
 	   )")"
 	  
 	  )
 	  )
 	}
 
+
+
 void turn():
 	{ }
 	{
 	 <RIGHT> {world.turnRight();salida = "Command: turn R";}
-	| <LEFT> {world.turnRight();salida = "Command: turn L";}	    
+	| <LEFT> {world.turnRight();world.turnRight();world.turnRight();salida = "Command: turn L";}	    
 	}
 
 void turnTo():
-	{ }
+	{boolean facing;}
 	{
 	 
-	 <NORTH>{world.turnRight();salida = "Command: turnTo N";}
-	| <SOUTH>{world.turnRight();salida = "Command: turnTo S";}
-	| <EAST>{world.turnRight();salida = "Command: turnTo E";}
-	| <WEST>{world.turnRight();salida = "Command: turnTo W";} }
+	 <NORTH>
+	 {facing = world.facingNorth();
+	 while(facing == false)
+	 {	world.turnRight();
+	    facing = world.facingNorth();
+	   }
+	 salida = "Command: turnTo N";}
+	 
+	| <SOUTH>
+	{facing = world.facingSouth();
+	 while(facing == false)
+	 {	world.turnRight();
+	    facing = world.facingSouth();
+	   }
+	 salida = "Command: turnTo S";}
+	 
+	| <EAST>
+	{facing = world.facingEast();
+		 while(facing == false)
+		 {	world.turnRight();
+		    facing = world.facingEast();
+		   }
+		 salida = "Command: turnTo E";}
+		 
+	| <WEST>
+	{facing = world.facingWest();
+		 while(facing == false)
+		 {	world.turnRight();
+		    facing = world.facingWest();
+		   }
+		 salida = "Command: turnTo W";}
+	 }
 
 
 void drop():
@@ -330,7 +427,15 @@ void facing():
 	{
 	}
 	{
-	  < NORTH >|<SOUTH>| <EAST> | <WEST>
+	  < NORTH >
+	 
+	  |<SOUTH>
+	  
+	  | <EAST>
+	 
+	  | <WEST>
+	 
+
 	}
 
 void can():
@@ -361,7 +466,7 @@ void conditional():
 	{
 	}
 	{
-	  <IF>condition() "{"block()"}" < ELSE > "{"block()"}"
+	  <IF> condition() "{"block()"}" < ELSE > "{"block()"}"
 	}
 void loop():
 	{
@@ -396,57 +501,7 @@ void simpleCommand():
 		| <STR>"="x = num()
 		| <TEST>  "(" pruebas() ")"
 	}
-//boolean command(Console sistema):
-//	{	
-//		
-//		int x,y;
-//		salida=new String();	
-//	}
-//
-//	{
-//		(
-//		  (
-//		   <JUMP>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}
-//		| <TURN> "(right)" {world.turnRight();salida = "Command: Turnright";}
-//		| 	<GRAB>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-//		| 	<DROP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";} 
-//		) ";" 
-//
-//		{
-//		    try {
-//	    			 Thread.sleep(900);
-//	    	    } catch (InterruptedException e) {
-//	    			        System.err.format("IOException: %s%n", e);
-//	    		    }
-//	    			 
-//			sistema.printOutput(salida);
-//			return true;
-//		})+
-//
-//    	| <EOF> {return false;} 
-//	}
 
-//	void put() :
-//	{
-//		int f=1;	
-//	}
-//	{
-//		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
-//		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
-//
-//	}
-//
-//	void get() :
-//	{
-//		int f=1;	
-//	}
-//	{
-//		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
-//		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
-//
-//	}
-
-//VAMO A HACE UNA NUEVA GRAM
 	/**
 	
 	 * Unsigned decimal number
@@ -454,7 +509,7 @@ void simpleCommand():
 	 * @error  corresponding value is too large
 	 */
 
-	int num() throws Error:
+int num() throws Error:
 	{	
 		int total=1;
 	}
