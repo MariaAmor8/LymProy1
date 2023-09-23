@@ -11,27 +11,71 @@ public interface RobotConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int MOV = 5;
+  int JUMP = 5;
   /** RegularExpression Id. */
-  int RIGHT = 6;
+  int WALK = 6;
   /** RegularExpression Id. */
-  int PUT = 7;
+  int LEAP = 7;
   /** RegularExpression Id. */
-  int PICK = 8;
+  int TURN = 8;
   /** RegularExpression Id. */
-  int POP = 9;
+  int TURNTO = 9;
   /** RegularExpression Id. */
-  int GO = 10;
+  int DROP = 10;
   /** RegularExpression Id. */
-  int HOP = 11;
+  int GET = 11;
   /** RegularExpression Id. */
-  int BALLOONS = 12;
+  int GRAB = 12;
   /** RegularExpression Id. */
-  int CHIPS = 13;
+  int LETGO = 13;
   /** RegularExpression Id. */
-  int NUM = 14;
+  int NOP = 14;
   /** RegularExpression Id. */
-  int DIGIT = 15;
+  int IF = 15;
+  /** RegularExpression Id. */
+  int ELSE = 16;
+  /** RegularExpression Id. */
+  int WHILE = 17;
+  /** RegularExpression Id. */
+  int REPEAT = 18;
+  /** RegularExpression Id. */
+  int TIMES = 19;
+  /** RegularExpression Id. */
+  int FACING = 20;
+  /** RegularExpression Id. */
+  int CAN = 21;
+  /** RegularExpression Id. */
+  int NOT = 22;
+  /** RegularExpression Id. */
+  int NAME = 23;
+  /** RegularExpression Id. */
+  int DEFVAR = 24;
+  /** RegularExpression Id. */
+  int DEFPROC = 25;
+  /** RegularExpression Id. */
+  int NORTH = 26;
+  /** RegularExpression Id. */
+  int SOUTH = 27;
+  /** RegularExpression Id. */
+  int EAST = 28;
+  /** RegularExpression Id. */
+  int WEST = 29;
+  /** RegularExpression Id. */
+  int FRONT = 30;
+  /** RegularExpression Id. */
+  int RIGHT = 31;
+  /** RegularExpression Id. */
+  int LEFT = 32;
+  /** RegularExpression Id. */
+  int BACK = 33;
+  /** RegularExpression Id. */
+  int NUM = 34;
+  /** RegularExpression Id. */
+  int DIGIT = 35;
+  /** RegularExpression Id. */
+  int letra = 36;
+  /** RegularExpression Id. */
+  int STR = 37;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -43,21 +87,43 @@ public interface RobotConstants {
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
-    "\"Mov\"",
-    "\"RIGHT\"",
-    "\"Put\"",
-    "\"Pick\"",
-    "\"Pop\"",
-    "\"GO\"",
-    "\"HOP\"",
-    "\"BALLOONS\"",
-    "\"CHIPS\"",
+    "\"jump\"",
+    "\"walk\"",
+    "\"leap\"",
+    "\"turn\"",
+    "\"turnto\"",
+    "\"drop\"",
+    "\"get\"",
+    "\"grab\"",
+    "\"letgo\"",
+    "\"nop\"",
+    "\"if\"",
+    "\"else\"",
+    "\"while\"",
+    "\"repeat\"",
+    "\"times\"",
+    "\"facing\"",
+    "\"can\"",
+    "\"not\"",
+    "\"name\"",
+    "\"defvar\"",
+    "\"defproc\"",
+    "\"north\"",
+    "\"south\"",
+    "\"east\"",
+    "\"west\"",
+    "\"front\"",
+    "\"right\"",
+    "\"left\"",
+    "\"back\"",
     "<NUM>",
     "<DIGIT>",
+    "<letra>",
+    "<STR>",
     "\"(\"",
     "\")\"",
-    "\",\"",
     "\";\"",
+    "\",\"",
   };
 
 }

@@ -80,25 +80,21 @@ TOKEN: /* Nombres de Comandos */
 
 }
 
-TOKEN:
-{
 
-		 <NORTH: "north" >
-        | <EAST: "east">
-        | <WEST: "west">
-        | <SOUTH: "south">
-        | <FRONT: "front">
-        | <BACK: "back">
-        | <LEFT: "left">
-        | <RIGHT: "right">
-
-}
 
 TOKEN:
 {
 
 		 <DEFVAR: "defvar" >
-        | <DEFPROC: "defproc">	
+        | <DEFPROC: "defproc">
+        | <NORTH: "north">
+        | <SOUTH: "south">
+        | <EAST: "east">
+        | <WEST: "west">
+        | <FRONT: "front">
+        | <RIGHT: "right">
+        | <LEFT: "left">
+        | <BACK: "back">
 
 }
 
@@ -110,37 +106,68 @@ TOKEN :
         
 }
 
-TOKEN :
+
+TOKEN:
 {
-		<LP: "(" >
-        | <	RP: ")">
-        | <	LCB: "{">
-        | <	RCB: "}">
-        | <	SEMICOLON: ";">
-        | <	COMA: ",">
-        
+  <#letra: ["a"-"z","A"-"Z"]>
+	| <STR: <letra>(<letra>|<NUM>)* >
 }
 
 
+//boolean command(uniandes.lym.robot.view.Console sistema) :
+//	boolean command(Console sistema):
+//	{	
+//		
+//		int x,y;
+//		salida=new String();	
+//	}
+//
+//	
+//	{
+//		(
+//		  (
+//		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
+//		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
+//		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
+//		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
+//		|  <PUT> "("  put() ")"					  			
+//		|  <PICK> "(" get()  ")"	
+//	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
+//		) ";" 
+//
+//		{
+//		    try {
+//	    			 Thread.sleep(900);
+//	    	    } catch (InterruptedException e) {
+//	    			        System.err.format("IOException: %s%n", e);
+//	    		    }
+//	    			 
+//			sistema.printOutput(salida);
+//			return true;
+//		})+
+//
+//    	| <EOF> {return false;} 
+//	}
 
-	//boolean command(uniandes.lym.robot.view.Console sistema) :
-	boolean command(Console sistema):
+boolean command(Console sistema):
 	{	
 		
 		int x,y;
 		salida=new String();	
 	}
 
-	
 	{
-		(		  (
-		   <NOP> "(" ")" {world.turnRight();salida = "Command: Turnright";}
-		| 	<GRAB>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-		| 	<DROP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
-		| 	<JUMP>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
-		|  <LETGO> "("  put() ")"					  			
-		|  <GET> "(" get()  ")"	
-	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
+		(
+		  (
+		   <JUMP>  "(" jump()")"
+		| <WALK> "(" walk()")"
+		| <LEAP> "(" leap()")"
+		| 	<TURN>  "(" turn() ")"  
+		| 	<TURNTO>  "(" turnTo() ")"
+		| 	<DROP>  "(" drop() ")"
+		| 	<GET>  "(" get() ")"
+		| 	<GRAB>  "(" grab() ")"
+		| 	<LETGO>  "(" letGo() ")"
 		) ";" 
 
 		{
@@ -157,30 +184,155 @@ TOKEN :
     	| <EOF> {return false;} 
 	}
 
-	void put() :
+
+void jump():
 	{
-		int f=1;	
+	  int x,y;
 	}
 	{
-		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
-		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
-
+	  x=num() "," y=num() {world.setPostion(x,y);salida = "Command: Jump";}
 	}
 
-	void get() :
+void walk():
 	{
-		int f=1;	
+	  int x;
 	}
 	{
-		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
-		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
-
+	  x=num()
+	 (	   ","
+	   (
+	     <FRONT>{world.moveForward(x, false);salida = "Command: Walk F";}
+	   | <BACK>{world.moveForward(-x, false);salida = "Command: Walk B";}
+	   | <RIGHT>{world.moveForward(x, false);salida = "Command: Walk R";}
+	   | <LEFT>{world.moveForward(-x, false);salida = "Command: Walk L";}
+	   
+	   | <NORTH>{world.moveVertically(x, false);salida = "Command: Walk N";}
+	   | <SOUTH>{world.moveVertically(-x, false);salida = "Command: Walk S";}
+	   |<EAST>{world.moveHorizontally(x, false);salida = "Command: Walk E";}
+	   | <WEST>{world.moveHorizontally(-x, false);salida = "Command: Walk W";}	   )
+	  
+	  )?
+	  {world.moveForward(x,false);salida = "Command: Walk";}
 	}
 
-	
-	
+void leap():
+	{
+	  int x;
+	}
+	{
+	  x=num()
+	 (
+	   ","
+	   (
+	     <FRONT>{world.moveForward(x, true);salida = "Command: Leap F";}
+	   | <BACK>{world.moveForward(-x, true);salida = "Command: Leap B";}
+	   | <RIGHT>{world.moveForward(x, true);salida = "Command: Leap R";}
+	   | <LEFT>{world.moveForward(-x, true);salida = "Command: Leap L";}
+	   
+	   | <NORTH>{world.moveVertically(x, true);salida = "Command: Leap N";}
+	   | <SOUTH>{world.moveVertically(-x, true);salida = "Command: Leap S";}
+	   |<EAST>{world.moveHorizontally(x, true);salida = "Command: Leap E";}
+	   | <WEST>{world.moveHorizontally(-x, true);salida = "Command: Leap W";}
+	   )
+	  
+	  )?
+	  {world.moveForward(x,true);salida = "Command: Leap";}
+	}
 
+void turn():
+	{ }
+	{
+	 <RIGHT> {world.turnRight();salida = "Command: turn R";}
+	| <LEFT> {world.turnRight();salida = "Command: turn L";}	    
+	}
+
+void turnTo():
+	{ }
+	{
+	 
+	 <NORTH>{world.turnRight();salida = "Command: turnTo N";}
+	| <SOUTH>{world.turnRight();salida = "Command: turnTo S";}
+	| <EAST>{world.turnRight();salida = "Command: turnTo E";}
+	| <WEST>{world.turnRight();salida = "Command: turnTo W";} }
+
+
+void drop():
+	{ int x=1;}
+	{
+	 x=num() {world.putChips(x);salida = "Command: Drop Chips";}  
+	}
+
+void get():
+	{ int x=1;}
+	{
+	 x=num() {world.pickChips(x);salida = "Command: Pick chips";}  
+	}
+
+void grab():
+	{ int f=1;}
+	{
+	 f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";}  
+	}
+
+void letGo():
+	{ int f=1;}
+	{
+	 f=num() {world.putBalloons(f); salida = "Command: Put Balloons";}  
+	}
+
+//boolean command(Console sistema):
+//	{	
+//		
+//		int x,y;
+//		salida=new String();	
+//	}
+//
+//	{
+//		(
+//		  (
+//		   <JUMP>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}
+//		| <TURN> "(right)" {world.turnRight();salida = "Command: Turnright";}
+//		| 	<GRAB>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
+//		| 	<DROP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";} 
+//		) ";" 
+//
+//		{
+//		    try {
+//	    			 Thread.sleep(900);
+//	    	    } catch (InterruptedException e) {
+//	    			        System.err.format("IOException: %s%n", e);
+//	    		    }
+//	    			 
+//			sistema.printOutput(salida);
+//			return true;
+//		})+
+//
+//    	| <EOF> {return false;} 
+//	}
+
+//	void put() :
+//	{
+//		int f=1;	
+//	}
+//	{
+//		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
+//		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
+//
+//	}
+//
+//	void get() :
+//	{
+//		int f=1;	
+//	}
+//	{
+//		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
+//		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
+//
+//	}
+
+//VAMO A HACE UNA NUEVA GRAM
 	/**
+	
 	 * Unsigned decimal number
 	 * @return the corresponding value of the string
 	 * @error  corresponding value is too large

@@ -45,7 +45,7 @@ public class Console extends JPanel  {
 	/**
 	 * El area de texto que se usa para los mensajes del system
 	 */
-	static private JTextArea system =  new JTextArea(10,30);
+	static private JTextArea system =  new JTextArea(10,10);
  
 	
 	
@@ -53,7 +53,7 @@ public class Console extends JPanel  {
 	 * El campo de texto en el que el usuario puede escribir mensajes para que
 	 * la console los interpreter
 	 */
-	static private JTextArea orden = new JTextArea(10,30);
+	static private JTextArea orden = new JTextArea(10,10);
 	
 	/**
 	* Boton para enviar texto al interpreter
@@ -148,7 +148,7 @@ public static void relaunch(int dim){
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		if (frameSize.height > screenSize.height) {
-			frameSize.height = screenSize.height;
+			frameSize.height = screenSize.height/2;
 		}
 		if (frameSize.width > screenSize.width) {
 			frameSize.width = screenSize.width;
