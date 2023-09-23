@@ -47,7 +47,7 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int NOT = 22;
   /** RegularExpression Id. */
-  int NAME = 23;
+  int TEST = 23;
   /** RegularExpression Id. */
   int DEFVAR = 24;
   /** RegularExpression Id. */
@@ -105,7 +105,7 @@ public interface RobotConstants {
     "\"facing\"",
     "\"can\"",
     "\"not\"",
-    "\"name\"",
+    "\"test\"",
     "\"defvar\"",
     "\"defproc\"",
     "\"north\"",
@@ -121,9 +121,14 @@ public interface RobotConstants {
     "<letra>",
     "<STR>",
     "\"(\"",
-    "\")\"",
-    "\";\"",
     "\",\"",
+    "\")\"",
+    "\"()\"",
+    "\"{\"",
+    "\"}\"",
+    "\";\"",
+    "\":\"",
+    "\"=\"",
   };
 
 }

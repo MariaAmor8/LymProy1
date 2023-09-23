@@ -76,7 +76,7 @@ TOKEN: /* Nombres de Comandos */
         | <FACING: "facing" >
         | <CAN: "can" >
         | <NOT: "not" >
-        | <NAME: "name" >
+        | <TEST: "test">
 
 }
 
@@ -95,6 +95,8 @@ TOKEN:
         | <RIGHT: "right">
         | <LEFT: "left">
         | <BACK: "back">
+//        | <LP: "(" >
+//        | <RP: ")" >
 
 }
 
@@ -149,7 +151,7 @@ TOKEN:
 //    	| <EOF> {return false;} 
 //	}
 
-boolean command(Console sistema):
+boolean command(Console sistema): //command es nuestro main
 	{	
 		
 		int x,y;
@@ -159,16 +161,11 @@ boolean command(Console sistema):
 	{
 		(
 		  (
-		   <JUMP>  "(" jump()")"
-		| <WALK> "(" walk()")"
-		| <LEAP> "(" leap()")"
-		| 	<TURN>  "(" turn() ")"  
-		| 	<TURNTO>  "(" turnTo() ")"
-		| 	<DROP>  "(" drop() ")"
-		| 	<GET>  "(" get() ")"
-		| 	<GRAB>  "(" grab() ")"
-		| 	<LETGO>  "(" letGo() ")"
-		) ";" 
+		   simpleCommand()
+		| <DEFPROC><STR> (("("((<STR>|<NUM>)(","(<STR>|<NUM>))*)*")")|("()"))  "{"block()"}"
+		| 	<DEFVAR><STR>x=num()
+
+		) 
 
 		{
 		    try {
@@ -183,6 +180,48 @@ boolean command(Console sistema):
 
     	| <EOF> {return false;} 
 	}
+
+void block():
+	{	
+		
+		int x,y;	
+	}
+
+	{
+		(
+		  (
+		    simpleCommand()
+		  | conditional()
+		  | loop()
+		  | repeatTimes()
+		  ) 
+
+		{
+		    try {
+	    			 Thread.sleep(900);
+	    	    } catch (InterruptedException e) {
+	    			        System.err.format("IOException: %s%n", e);
+	    		    } 	
+		})
+		(";"(
+		    simpleCommand()
+		  | conditional()
+		  | loop()
+		  | repeatTimes()
+		  )		)*
+ 
+	}
+
+
+
+void pruebas():
+	{
+	 int x;
+	}
+	{
+	  x=num(){world.left();salida= "Command: left test";}
+	}
+
 
 
 void jump():
@@ -199,29 +238,36 @@ void walk():
 	}
 	{
 	  x=num()
-	 (	   ","
+	 (
+	   (")"{world.moveForward(x,false);salida = "Command: Walk";})
+	 | 
+	   (	   ","
 	   (
 	     <FRONT>{world.moveForward(x, false);salida = "Command: Walk F";}
 	   | <BACK>{world.moveForward(-x, false);salida = "Command: Walk B";}
 	   | <RIGHT>{world.moveForward(x, false);salida = "Command: Walk R";}
 	   | <LEFT>{world.moveForward(-x, false);salida = "Command: Walk L";}
 	   
-	   | <NORTH>{world.moveVertically(x, false);salida = "Command: Walk N";}
-	   | <SOUTH>{world.moveVertically(-x, false);salida = "Command: Walk S";}
+	   | <NORTH>{world.moveVertically(-x, false);salida = "Command: Walk N";}
+	   | <SOUTH>{world.moveVertically(x, false);salida = "Command: Walk S";}
 	   |<EAST>{world.moveHorizontally(x, false);salida = "Command: Walk E";}
-	   | <WEST>{world.moveHorizontally(-x, false);salida = "Command: Walk W";}	   )
+	   | <WEST>{world.moveHorizontally(-x, false);salida = "Command: Walk W";}	   )")"
 	  
-	  )?
-	  {world.moveForward(x,false);salida = "Command: Walk";}
+	  )
+	  )
 	}
 
+
 void leap():
-	{
+{
 	  int x;
 	}
 	{
 	  x=num()
 	 (
+	   (")"{world.moveForward(x,true);salida = "Command: Leap";})
+	 | 
+	   (
 	   ","
 	   (
 	     <FRONT>{world.moveForward(x, true);salida = "Command: Leap F";}
@@ -229,14 +275,14 @@ void leap():
 	   | <RIGHT>{world.moveForward(x, true);salida = "Command: Leap R";}
 	   | <LEFT>{world.moveForward(-x, true);salida = "Command: Leap L";}
 	   
-	   | <NORTH>{world.moveVertically(x, true);salida = "Command: Leap N";}
-	   | <SOUTH>{world.moveVertically(-x, true);salida = "Command: Leap S";}
+	   | <NORTH>{world.moveVertically(-x, true);salida = "Command: Leap N";}
+	   | <SOUTH>{world.moveVertically(x, true);salida = "Command: Leap S";}
 	   |<EAST>{world.moveHorizontally(x, true);salida = "Command: Leap E";}
 	   | <WEST>{world.moveHorizontally(-x, true);salida = "Command: Leap W";}
-	   )
+	   )")"
 	  
-	  )?
-	  {world.moveForward(x,true);salida = "Command: Leap";}
+	  )
+	  )
 	}
 
 void turn():
@@ -280,6 +326,76 @@ void letGo():
 	 f=num() {world.putBalloons(f); salida = "Command: Put Balloons";}  
 	}
 
+void facing():
+	{
+	}
+	{
+	  < NORTH >|<SOUTH>| <EAST> | <WEST>
+	}
+
+void can():
+	{
+	}
+	{
+	  simpleCommand()
+	}
+
+void not():
+	{
+	}
+	{
+	  <FACING>"("facing()")"
+	  |<CAN>"(" can() ")"
+	}
+
+void condition():
+	{
+	}
+	{
+	  <FACING>"("facing()")"
+	| <CAN>"(" can() ")"
+	|  < NOT >":"not()
+	}
+
+void conditional():
+	{
+	}
+	{
+	  <IF>condition() "{"block()"}" < ELSE > "{"block()"}"
+	}
+void loop():
+	{
+	}
+	{
+	  <WHILE>condition() "{"block()"}"
+	}
+
+void repeatTimes():
+	{
+	  int x;
+	}
+	{
+	  <REPEAT>x = num()<TIMES>"{"block()"}"
+	}
+
+void simpleCommand():
+	{
+	  int x,y;
+	}
+	{
+	  <JUMP>  "(" jump()")"
+		| <WALK> "(" walk()
+		| <LEAP> "(" leap()
+		| 	<TURN>  "(" turn()")"
+		| 	<TURNTO>  "(" turnTo() ")"
+		| 	<DROP>  "(" drop() ")"
+		| 	<GET>  "(" get() ")"
+		| 	<GRAB>  "(" grab() ")"
+		| 	<LETGO>  "(" letGo() ")"
+		| 	<NOP>  ("()"|"(" ")")
+		| <STR>"="x = num()
+		| <TEST>  "(" pruebas() ")"
+	}
 //boolean command(Console sistema):
 //	{	
 //		
