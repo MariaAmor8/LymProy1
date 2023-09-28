@@ -138,6 +138,7 @@ boolean command(Console sistema): //command es nuestro main
 		  salida="Command: definir variable ";
 		 }
 		| conditional()
+		| "{"block()"}"
 
 		) 
 
