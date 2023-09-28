@@ -9,6 +9,7 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.HashMap;
 
 @SuppressWarnings("serial")
 public class Robot implements RobotConstants {
@@ -22,6 +23,7 @@ public class Robot implements RobotConstants {
         }
 
         String salida=new String();
+        HashMap<String, Integer> variables = new HashMap<>();
 
 //boolean command(uniandes.lym.robot.view.Console sistema) :
 //	boolean command(Console sistema):
@@ -59,6 +61,7 @@ public class Robot implements RobotConstants {
 //	}
   final public 
 boolean command(Console sistema) throws ParseException {int x,y;
+                String nom;
                 salida=new String();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case JUMP:
@@ -71,6 +74,7 @@ boolean command(Console sistema) throws ParseException {int x,y;
     case GRAB:
     case LETGO:
     case NOP:
+    case IF:
     case TEST:
     case DEFVAR:
     case DEFPROC:
@@ -172,8 +176,14 @@ boolean command(Console sistema) throws ParseException {int x,y;
           }
         case DEFVAR:{
           jj_consume_token(DEFVAR);
-          jj_consume_token(STR);
+          nom = nombre();
           x = num();
+variables.put(nom,x);
+                  salida="Command: definir variable ";
+          break;
+          }
+        case IF:{
+          conditional();
           break;
           }
         default:
@@ -200,6 +210,7 @@ try {
         case GRAB:
         case LETGO:
         case NOP:
+        case IF:
         case TEST:
         case DEFVAR:
         case DEFPROC:
@@ -315,8 +326,9 @@ try {
 }
 
   final public void pruebas() throws ParseException {int x;
-    x = num();
-world.left();salida= "Command: left test";
+         String nom;
+    nom = nombre();
+salida= nom;
 }
 
   final public void jump() throws ParseException {int x,y;
@@ -327,6 +339,7 @@ world.setPostion(x,y);salida = "Command: Jump";
 }
 
   final public void walk() throws ParseException {int x;
+          boolean facing;
     x = num();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case 40:{
@@ -349,32 +362,56 @@ world.moveForward(-x, false);salida = "Command: Walk B";
         }
       case RIGHT:{
         jj_consume_token(RIGHT);
-world.moveForward(x, false);salida = "Command: Walk R";
+world.moveHorizontally(x, false);salida = "Command: Walk R";
         break;
         }
       case LEFT:{
         jj_consume_token(LEFT);
-world.moveForward(-x, false);salida = "Command: Walk L";
+world.moveHorizontally(-x, false);salida = "Command: Walk L";
         break;
         }
       case NORTH:{
         jj_consume_token(NORTH);
-world.moveVertically(-x, false);salida = "Command: Walk N";
+facing = world.facingNorth();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingNorth();
+                        }
+             world.moveForward(x, false);
+             salida = "Command: Walk N";
         break;
         }
       case SOUTH:{
         jj_consume_token(SOUTH);
-world.moveVertically(x, false);salida = "Command: Walk S";
+facing = world.facingSouth();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingSouth();
+                        }
+             world.moveForward(x, false);
+             salida = "Command: Walk S";
         break;
         }
       case EAST:{
         jj_consume_token(EAST);
-world.moveHorizontally(x, false);salida = "Command: Walk E";
+facing = world.facingEast();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingEast();
+                        }
+             world.moveForward(x, false);
+             salida = "Command: Walk E";
         break;
         }
       case WEST:{
         jj_consume_token(WEST);
-world.moveHorizontally(-x, false);salida = "Command: Walk W";
+facing = world.facingWest();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingWest();
+                        }
+             world.moveForward(x, false);
+             salida = "Command: Walk W";
         break;
         }
       default:
@@ -393,6 +430,7 @@ world.moveHorizontally(-x, false);salida = "Command: Walk W";
 }
 
   final public void leap() throws ParseException {int x;
+          boolean facing;
     x = num();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case 40:{
@@ -415,32 +453,56 @@ world.moveForward(-x, true);salida = "Command: Leap B";
         }
       case RIGHT:{
         jj_consume_token(RIGHT);
-world.moveForward(x, true);salida = "Command: Leap R";
+world.moveHorizontally(x, true);salida = "Command: Leap R";
         break;
         }
       case LEFT:{
         jj_consume_token(LEFT);
-world.moveForward(-x, true);salida = "Command: Leap L";
+world.moveHorizontally(-x, true);salida = "Command: Leap L";
         break;
         }
       case NORTH:{
         jj_consume_token(NORTH);
-world.moveVertically(-x, true);salida = "Command: Leap N";
+facing = world.facingNorth();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingNorth();
+                        }
+             world.moveForward(x, true);
+             salida = "Command: Leap N";
         break;
         }
       case SOUTH:{
         jj_consume_token(SOUTH);
-world.moveVertically(x, true);salida = "Command: Leap S";
+facing = world.facingSouth();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingSouth();
+                        }
+             world.moveForward(x, true);
+             salida = "Command: Leap S";
         break;
         }
       case EAST:{
         jj_consume_token(EAST);
-world.moveHorizontally(x, true);salida = "Command: Leap E";
+facing = world.facingEast();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingEast();
+                        }
+             world.moveForward(x, true);
+             salida = "Command: Leap E";
         break;
         }
       case WEST:{
         jj_consume_token(WEST);
-world.moveHorizontally(-x, true);salida = "Command: Leap W";
+facing = world.facingWest();
+                while(facing == false)
+                        {world.turnRight();
+                facing = world.facingWest();
+                        }
+             world.moveForward(x, true);
+             salida = "Command: Leap W";
         break;
         }
       default:
@@ -467,7 +529,7 @@ world.turnRight();salida = "Command: turn R";
       }
     case LEFT:{
       jj_consume_token(LEFT);
-world.turnRight();salida = "Command: turn L";
+world.turnRight();world.turnRight();world.turnRight();salida = "Command: turn L";
       break;
       }
     default:
@@ -477,26 +539,46 @@ world.turnRight();salida = "Command: turn L";
     }
 }
 
-  final public void turnTo() throws ParseException {
+  final public void turnTo() throws ParseException {boolean facing;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case NORTH:{
       jj_consume_token(NORTH);
-world.turnRight();salida = "Command: turnTo N";
+facing = world.facingNorth();
+         while(facing == false)
+         {      world.turnRight();
+            facing = world.facingNorth();
+           }
+         salida = "Command: turnTo N";
       break;
       }
     case SOUTH:{
       jj_consume_token(SOUTH);
-world.turnRight();salida = "Command: turnTo S";
+facing = world.facingSouth();
+         while(facing == false)
+         {      world.turnRight();
+            facing = world.facingSouth();
+           }
+         salida = "Command: turnTo S";
       break;
       }
     case EAST:{
       jj_consume_token(EAST);
-world.turnRight();salida = "Command: turnTo E";
+facing = world.facingEast();
+                 while(facing == false)
+                 {      world.turnRight();
+                    facing = world.facingEast();
+                   }
+                 salida = "Command: turnTo E";
       break;
       }
     case WEST:{
       jj_consume_token(WEST);
-world.turnRight();salida = "Command: turnTo W";
+facing = world.facingWest();
+                 while(facing == false)
+                 {      world.turnRight();
+                    facing = world.facingWest();
+                   }
+                 salida = "Command: turnTo W";
       break;
       }
     default:
@@ -738,65 +820,14 @@ world.putBalloons(f); salida = "Command: Put Balloons";
     }
 }
 
-//boolean command(Console sistema):
-//	{	
-//		
-//		int x,y;
-//		salida=new String();	
-//	}
-//
-//	{
-//		(
-//		  (
-//		   <JUMP>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}
-//		| <TURN> "(right)" {world.turnRight();salida = "Command: Turnright";}
-//		| 	<GRAB>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-//		| 	<DROP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";} 
-//		) ";" 
-//
-//		{
-//		    try {
-//	    			 Thread.sleep(900);
-//	    	    } catch (InterruptedException e) {
-//	    			        System.err.format("IOException: %s%n", e);
-//	    		    }
-//	    			 
-//			sistema.printOutput(salida);
-//			return true;
-//		})+
-//
-//    	| <EOF> {return false;} 
-//	}
-
-//	void put() :
-//	{
-//		int f=1;	
-//	}
-//	{
-//		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
-//		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
-//
-//	}
-//
-//	void get() :
-//	{
-//		int f=1;	
-//	}
-//	{
-//		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
-//		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
-//
-//	}
-
-//VAMO A HACE UNA NUEVA GRAM
-        /**
+/**
 	
 	 * Unsigned decimal number
 	 * @return the corresponding value of the string
 	 * @error  corresponding value is too large
 	 */
   final public 
-        int num() throws ParseException, Error {int total=1;
+int num() throws ParseException, Error {int total=1;
     jj_consume_token(NUM);
 try
                         {
@@ -807,6 +838,13 @@ try
                                 {if (true) throw new Error("Number out of bounds: "+token.image+" !!");}
                         }
                         {if ("" != null) return total;}
+    throw new Error("Missing return statement in function");
+}
+
+  final public String nombre() throws ParseException {String tNom;
+    jj_consume_token(STR);
+tNom = token.image;
+          {if ("" != null) return tNom;}
     throw new Error("Missing return statement in function");
 }
 
@@ -827,7 +865,7 @@ try
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x3807fe0,0x3807fe0,0x3807fe1,0x86ffe0,0x0,0x86ffe0,0xfc000000,0x0,0xfc000000,0x0,0x80000000,0x3c000000,0x3c000000,0x300000,0x700000,0x0,0x807fe0,};
+	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x380ffe0,0x380ffe0,0x380ffe1,0x86ffe0,0x0,0x86ffe0,0xfc000000,0x0,0xfc000000,0x0,0x80000000,0x3c000000,0x3c000000,0x300000,0x700000,0x0,0x807fe0,};
 	}
 	private static void jj_la1_init_1() {
 	   jj_la1_1 = new int[] {0x24,0x24,0x80,0x24,0x240,0x20,0x20,0x20,0x20,0x1000,0x20,0x3,0x180,0x3,0x180,0x1,0x0,0x0,0x0,0x0,0x240,0x20,};
