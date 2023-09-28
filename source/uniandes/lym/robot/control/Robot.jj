@@ -47,6 +47,7 @@ public class Robot
 
 	String salida=new String();
 	HashMap<String, Integer> variables = new HashMap<>();
+	HashMap<String, Integer> defProc = new HashMap<>();
 }
 PARSER_END(Robot)
 
@@ -117,40 +118,6 @@ TOKEN:
 }
 
 
-//boolean command(uniandes.lym.robot.view.Console sistema) :
-//	boolean command(Console sistema):
-//	{	
-//		
-//		int x,y;
-//		salida=new String();	
-//	}
-//
-//	
-//	{
-//		(
-//		  (
-//		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
-//		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-//		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
-//		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
-//		|  <PUT> "("  put() ")"					  			
-//		|  <PICK> "(" get()  ")"	
-//	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
-//		) ";" 
-//
-//		{
-//		    try {
-//	    			 Thread.sleep(900);
-//	    	    } catch (InterruptedException e) {
-//	    			        System.err.format("IOException: %s%n", e);
-//	    		    }
-//	    			 
-//			sistema.printOutput(salida);
-//			return true;
-//		})+
-//
-//    	| <EOF> {return false;} 
-//	}
 
 boolean command(Console sistema): //command es nuestro main
 	{	
