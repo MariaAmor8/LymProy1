@@ -235,9 +235,13 @@ void pruebas():
 void jump():
 	{
 	  int x,y;
+	  String nom;
+	  String nom2;
 	}
 	{
 	  x=num() "," y=num() {world.setPostion(x,y);salida = "Command: Jump";}
+	| nom=nombre() "," nom2=nombre()
+	
 	}
 
 void walk():
