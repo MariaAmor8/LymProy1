@@ -31,6 +31,7 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.HashMap; 
 
 @SuppressWarnings("serial")
 public class Robot 
@@ -45,6 +46,7 @@ public class Robot
 	}
 
 	String salida=new String();
+	HashMap<String, Integer> variables = new HashMap<>();
 }
 PARSER_END(Robot)
 
@@ -155,7 +157,9 @@ boolean command(Console sistema): //command es nuestro main
 	{	
 		
 		int x,y;
-		salida=new String();	
+		String nom;
+		salida=new String();
+			
 	}
 
 	{
@@ -163,7 +167,10 @@ boolean command(Console sistema): //command es nuestro main
 		  (
 		   simpleCommand()
 		| <DEFPROC><STR> (("("((<STR>|<NUM>)(","(<STR>|<NUM>))*)*")")|("()"))  "{"block()"}"
-		| 	<DEFVAR><STR>x=num()
+		| 	<DEFVAR>nom=nombre()x=num()
+		{ variables.put(nom,x);
+		  salida="Command: definir variable ";
+		 }
 		| conditional()
 
 		) 
@@ -218,9 +225,10 @@ void block():
 void pruebas():
 	{
 	 int x;
+	 String nom;
 	}
 	{
-	  x=num(){world.left();salida= "Command: left test";}
+	  nom=nombre(){salida= nom;}
 	}
 
 
@@ -527,5 +535,15 @@ int num() throws Error:
 			return total;
 		}
 	}
+
+String nombre():
+{
+  String tNom;
+}
+{
+  <STR>
+	{ tNom = token.image; 
+	  return tNom; }
+}
 
 	
