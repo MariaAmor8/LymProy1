@@ -125,21 +125,23 @@ boolean command(Console sistema): //command es nuestro main
 		int x,y;
 		String nom;
 		salida=new String();
-		boolean can  = true;
+		boolean ejecutar  = true;
+		boolean posible;
 			
 	}
 
 	{
 		(
 		  (
-		   simpleCommand(can)
-		| <DEFPROC><STR> (("("((<STR>|<NUM>)(","(<STR>|<NUM>))*)*")")|("()"))  "{"block(can)"}"
+		   posible = simpleCommand(ejecutar)
+		| <DEFPROC><STR> (("("((<STR>|<NUM>)(","(<STR>|<NUM>))*)*")")|("()"))  "{"block(ejecutar)"}"
 		| 	<DEFVAR>nom=nombre()x=num()
 		{ variables.put(nom,x);
 		  salida="Command: definir variable ";
 		 }
 		| conditional()
-		| "{"block(can)"}"
+		| "{"block(ejecutar)"}"
+		| repeatTimes()
 
 		) 
 
@@ -157,16 +159,17 @@ boolean command(Console sistema): //command es nuestro main
     	| <EOF> {return false;} 
 	}
 
-void block(boolean can):
+void block(boolean ejecutar):
 	{	
 		
 		int x,y;
+		boolean posible;
 	}
 
 	{
 		(
 		  (
-		    simpleCommand(can)
+		    posible = simpleCommand(ejecutar)
 		  | conditional()
 		  | loop()
 		  | repeatTimes()
@@ -180,7 +183,7 @@ void block(boolean can):
 	    		    } 	
 		})
 		(";"(
-		    simpleCommand(can)
+		    posible = simpleCommand(ejecutar)
 		  | conditional()
 		  | loop()
 		  | repeatTimes()
@@ -207,6 +210,7 @@ boolean jump(boolean ejecutar):
 	  String nom;
 	  String nom2;
 	  boolean posible = true;
+	  String img;
 	}
 	{
 	  x=num() "," y=num()
@@ -585,20 +589,37 @@ boolean facing():
 
 	}
 
-void can():
+boolean can():
 	{
-	  boolean can = true;
+	  boolean ejecutar = true;
+	  boolean posible;
 	}
 	{
-	  simpleCommand(can)
+	  posible = simpleCommand(ejecutar)
+	  {
+	    return posible;
+	    }
 	}
 
-void not():
+boolean not():
 	{
+	   boolean verificar;
 	}
 	{
-	  <FACING>"("facing()")"
-	  |<CAN>"(" can() ")"
+	  <FACING>"("verificar=facing()")"
+	  {if(verificar == false) {
+	    verificar = true;}
+	   else { verificar = false;}
+	    return verificar;
+	    }
+	    
+	  |<CAN>"(" verificar=can() ")"
+	  {if(verificar == false) {
+	    verificar = true;
+	    }
+	    else { verificar = false;}
+	    return verificar;
+	    }
 	}
 
 boolean condition():
@@ -609,8 +630,12 @@ boolean condition():
 	  <FACING>"("verificar = facing()")"
 	  {return verificar;}
 	    
-	| <CAN>"(" can() ")"
-	|  < NOT >":"not()
+	| <CAN>"(" verificar = can() ")"
+	  {return verificar;}
+	  
+	|  < NOT >":"verificar = not()
+	{return verificar;}
+	
 	}
 
 void conditional():
@@ -621,11 +646,11 @@ void conditional():
 	{
 	  <IF> verCond=condition() "{"block(verCond)"}"
 	  {if(verCond == true) {
-	    salida = "condición verdadera";
+	    salida = "condicion verdadera";
 	    opuesto = false;
 	    }
 	    else {
-	      salida = "condición falsa";
+	      salida = "condicion falsa";
 	      opuesto = true;
 	    }
 	    }
@@ -645,16 +670,17 @@ void repeatTimes():
 	  int x;
 	}
 	{
-	  <REPEAT>x = num()<TIMES>"{"block(true)"}"
+	  <REPEAT>x = num()<TIMES>"{" block(false)"}"
+	  
 	}
 
-void simpleCommand(boolean ejecutar):
+boolean simpleCommand(boolean ejecutar):
 	{
 	  int x,y;
-	  boolean posible;
+	  boolean posible = true;
 	}
 	{
-	  <JUMP>  "(" posible = jump(ejecutar)")"
+	  (	    <JUMP>  "(" posible = jump(ejecutar)")"
 		| <WALK> "(" walk()
 		| <LEAP> "(" leap()
 		| 	<TURN>  "(" posible = turn(ejecutar)")"
@@ -663,9 +689,13 @@ void simpleCommand(boolean ejecutar):
 		| 	<GET>  "(" posible = get(ejecutar) ")"
 		| 	<GRAB>  "(" posible = grab(ejecutar) ")"
 		| 	<LETGO>  "(" posible = letGo(ejecutar) ")"
-		| 	<NOP>  ("()"|"(" ")")
+		| 	<NOP>  ("()"|"(" ")") {posible = true;}
 		| <STR>"="x = num()
-		| <TEST>  "(" pruebas() ")"
+		)
+		{
+		  return posible;
+		}
+		//| <TEST>  "(" pruebas() ")"
 	}
 
 //void comprobarSimpleCommand():

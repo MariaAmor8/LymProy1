@@ -29,7 +29,8 @@ public class Robot implements RobotConstants {
   final public boolean command(Console sistema) throws ParseException {int x,y;
                 String nom;
                 salida=new String();
-                boolean can  = true;
+                boolean ejecutar  = true;
+                boolean posible;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case JUMP:
     case WALK:
@@ -42,7 +43,7 @@ public class Robot implements RobotConstants {
     case LETGO:
     case NOP:
     case IF:
-    case TEST:
+    case REPEAT:
     case DEFVAR:
     case DEFPROC:
     case STR:
@@ -60,9 +61,8 @@ public class Robot implements RobotConstants {
         case GRAB:
         case LETGO:
         case NOP:
-        case TEST:
         case STR:{
-          simpleCommand(can);
+          posible = simpleCommand(ejecutar);
           break;
           }
         case DEFPROC:{
@@ -138,7 +138,7 @@ public class Robot implements RobotConstants {
             throw new ParseException();
           }
           jj_consume_token(42);
-          block(can);
+          block(ejecutar);
           jj_consume_token(43);
           break;
           }
@@ -156,8 +156,12 @@ variables.put(nom,x);
           }
         case 42:{
           jj_consume_token(42);
-          block(can);
+          block(ejecutar);
           jj_consume_token(43);
+          break;
+          }
+        case REPEAT:{
+          repeatTimes();
           break;
           }
         default:
@@ -185,7 +189,7 @@ try {
         case LETGO:
         case NOP:
         case IF:
-        case TEST:
+        case REPEAT:
         case DEFVAR:
         case DEFPROC:
         case STR:
@@ -213,7 +217,8 @@ try {
     throw new Error("Missing return statement in function");
 }
 
-  final public void block(boolean can) throws ParseException {int x,y;
+  final public void block(boolean ejecutar) throws ParseException {int x,y;
+                boolean posible;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case JUMP:
     case WALK:
@@ -225,9 +230,8 @@ try {
     case GRAB:
     case LETGO:
     case NOP:
-    case TEST:
     case STR:{
-      simpleCommand(can);
+      posible = simpleCommand(ejecutar);
       break;
       }
     case IF:{
@@ -275,9 +279,8 @@ try {
       case GRAB:
       case LETGO:
       case NOP:
-      case TEST:
       case STR:{
-        simpleCommand(can);
+        posible = simpleCommand(ejecutar);
         break;
         }
       case IF:{
@@ -310,6 +313,7 @@ salida= nom;
           String nom;
           String nom2;
           boolean posible = true;
+          String img;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case NUM:{
       x = num();
@@ -771,24 +775,36 @@ if(ejecutar) {
     throw new Error("Missing return statement in function");
 }
 
-  final public void can() throws ParseException {boolean can = true;
-    simpleCommand(can);
+  final public boolean can() throws ParseException {boolean ejecutar = true;
+          boolean posible;
+    posible = simpleCommand(ejecutar);
+{if ("" != null) return posible;}
+    throw new Error("Missing return statement in function");
 }
 
-  final public void not() throws ParseException {
+  final public boolean not() throws ParseException {boolean verificar;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case FACING:{
       jj_consume_token(FACING);
       jj_consume_token(38);
-      facing();
+      verificar = facing();
       jj_consume_token(40);
+if(verificar == false) {
+            verificar = true;}
+           else { verificar = false;}
+            {if ("" != null) return verificar;}
       break;
       }
     case CAN:{
       jj_consume_token(CAN);
       jj_consume_token(38);
-      can();
+      verificar = can();
       jj_consume_token(40);
+if(verificar == false) {
+            verificar = true;
+            }
+            else { verificar = false;}
+            {if ("" != null) return verificar;}
       break;
       }
     default:
@@ -796,6 +812,7 @@ if(ejecutar) {
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
 }
 
   final public boolean condition() throws ParseException {boolean verificar = false;
@@ -811,14 +828,16 @@ if(ejecutar) {
     case CAN:{
       jj_consume_token(CAN);
       jj_consume_token(38);
-      can();
+      verificar = can();
       jj_consume_token(40);
+{if ("" != null) return verificar;}
       break;
       }
     case NOT:{
       jj_consume_token(NOT);
       jj_consume_token(45);
-      not();
+      verificar = not();
+{if ("" != null) return verificar;}
       break;
       }
     default:
@@ -837,11 +856,11 @@ if(ejecutar) {
     block(verCond);
     jj_consume_token(43);
 if(verCond == true) {
-            salida = "condici\u00c3\u00b3n verdadera";
+            salida = "condicion verdadera";
             opuesto = false;
             }
             else {
-              salida = "condici\u00c3\u00b3n falsa";
+              salida = "condicion falsa";
               opuesto = true;
             }
     jj_consume_token(ELSE);
@@ -863,12 +882,12 @@ if(verCond == true) {
     x = num();
     jj_consume_token(TIMES);
     jj_consume_token(42);
-    block(true);
+    block(false);
     jj_consume_token(43);
 }
 
-  final public void simpleCommand(boolean ejecutar) throws ParseException {int x,y;
-          boolean posible;
+  final public boolean simpleCommand(boolean ejecutar) throws ParseException {int x,y;
+          boolean posible = true;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case JUMP:{
       jj_consume_token(JUMP);
@@ -948,6 +967,7 @@ if(verCond == true) {
         jj_consume_token(-1);
         throw new ParseException();
       }
+posible = true;
       break;
       }
     case STR:{
@@ -956,18 +976,13 @@ if(verCond == true) {
       x = num();
       break;
       }
-    case TEST:{
-      jj_consume_token(TEST);
-      jj_consume_token(38);
-      pruebas();
-      jj_consume_token(40);
-      break;
-      }
     default:
       jj_la1[23] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
+{if ("" != null) return posible;}
+    throw new Error("Missing return statement in function");
 }
 
 //void comprobarSimpleCommand():
@@ -1044,7 +1059,7 @@ tNom = token.image;
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x380ffe0,0x380ffe0,0x380ffe1,0x86ffe0,0x0,0x86ffe0,0x0,0xfc000000,0x0,0xfc000000,0x0,0x80000000,0x3c000000,0x0,0x3c000000,0x300000,0x700000,0x0,0x807fe0,};
+	   jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x304ffe0,0x304ffe0,0x304ffe1,0x6ffe0,0x0,0x6ffe0,0x0,0xfc000000,0x0,0xfc000000,0x0,0x80000000,0x3c000000,0x0,0x3c000000,0x300000,0x700000,0x0,0x7fe0,};
 	}
 	private static void jj_la1_init_1() {
 	   jj_la1_1 = new int[] {0x24,0x24,0x80,0x24,0x240,0x420,0x420,0x420,0x20,0x1000,0x20,0x24,0x3,0x180,0x3,0x180,0x1,0x0,0x24,0x0,0x0,0x0,0x240,0x20,};
