@@ -911,7 +911,7 @@ if(ejecutar) {
     throw new Error("Missing return statement in function");
 }
 
-  final public boolean can() throws ParseException {boolean ejecutar = true;
+  final public boolean can() throws ParseException {boolean ejecutar = false;
           boolean posible;
     posible = simpleCommand(ejecutar);
 {if ("" != null) return posible;}

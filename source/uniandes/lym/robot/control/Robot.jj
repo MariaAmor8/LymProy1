@@ -1475,7 +1475,7 @@ boolean facing():
 
 boolean can():
 	{
-	  boolean ejecutar = true;
+	  boolean ejecutar = false;
 	  boolean posible;
 	}
 	{
