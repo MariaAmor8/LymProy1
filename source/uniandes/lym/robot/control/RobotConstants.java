@@ -69,13 +69,15 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int BACK = 33;
   /** RegularExpression Id. */
-  int NUM = 34;
+  int AROUND = 34;
   /** RegularExpression Id. */
-  int DIGIT = 35;
+  int NUM = 35;
   /** RegularExpression Id. */
-  int letra = 36;
+  int DIGIT = 36;
   /** RegularExpression Id. */
-  int STR = 37;
+  int letra = 37;
+  /** RegularExpression Id. */
+  int STR = 38;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -116,6 +118,7 @@ public interface RobotConstants {
     "\"right\"",
     "\"left\"",
     "\"back\"",
+    "\"around\"",
     "<NUM>",
     "<DIGIT>",
     "<letra>",
