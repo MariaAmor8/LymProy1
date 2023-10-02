@@ -1,3 +1,757 @@
+///*
+//Gramatica para el Robot:
+//Autor: Alejandro Arango
+//Modificado por: Silvia Takahashi
+//Modificado por: Juan Pablo Morales.
+//Agregadas producciones para manejar globos
+//Modificado por Silvia Takahashi
+//
+//
+// **/
+//
+//
+//options 
+//{
+//  
+//	LOOKAHEAD=1; 
+//	IGNORE_CASE=true;
+//	STATIC = false;
+//	
+//}
+//   
+//
+//PARSER_BEGIN(Robot)
+//
+//package uniandes.lym.robot.control;
+//
+//import uniandes.lym.robot.kernel.*;
+//import uniandes.lym.robot.view.Console;
+// 
+//import java.awt.Point;
+//import java.io.*;
+//import java.util.Vector;
+//import java.util.LinkedList;
+//import java.util.HashMap; 
+//
+//@SuppressWarnings("serial")
+//public class Robot 
+//{
+//
+//
+//	private RobotWorldDec world;
+//	
+//	
+//	void setWorld(RobotWorld w) {
+//		world = (RobotWorldDec) w;	
+//	}
+//
+//	String salida=new String();
+//	HashMap<String, Integer> variables = new HashMap<>();
+//	HashMap<String, Integer> defProc = new HashMap<>();
+//}
+//PARSER_END(Robot)
+//
+//SKIP:
+//{
+//	" "
+//	|	"\r"
+//	|	"\t"
+//	| "\n"
+//}
+//
+//TOKEN: /* Nombres de Comandos */
+//{
+//         <JUMP: "jump" >
+//        | <WALK: "walk" >
+//        | <LEAP: "leap" >
+//        | <TURN: "turn" >
+//         | <TURNTO: "turnto" >
+//        | <DROP: "drop" >
+//        | <GET: "get" >
+//        | <GRAB: "grab" >
+//        | <LETGO: "letgo" >
+//        | <NOP: "nop" >
+//        | <IF: "if" >
+//        | <ELSE: "else" >
+//        | <WHILE: "while" >
+//        | <REPEAT: "repeat" >
+//        | <TIMES: "times" >
+//        | <FACING: "facing" >
+//        | <CAN: "can" >
+//        | <NOT: "not" >
+//        | <TEST: "test">
+//
+//}
+//
+//
+//TOKEN:
+//{
+//
+//		 <DEFVAR: "defvar" >
+//        | <DEFPROC: "defproc">
+//        | <NORTH: "north">
+//        | <SOUTH: "south">
+//        | <EAST: "east">
+//        | <WEST: "west">
+//        | <FRONT: "front">
+//        | <RIGHT: "right">
+//        | <LEFT: "left">
+//        | <BACK: "back">
+////        | <LP: "(" >
+////        | <RP: ")" >
+//
+//}
+//
+//
+//TOKEN :
+//{
+//		<NUM: (<DIGIT>)+ >
+//		|  	<#DIGIT: ["0"-"9"] >
+//        
+//}
+//
+//
+//TOKEN:
+//{
+//  <#letra: ["a"-"z","A"-"Z"]>
+//	| <STR: <letra>(<letra>|<NUM>)* >
+//}
+//
+//
+//
+//boolean command(Console sistema): //command es nuestro main
+//	{	
+//		
+//		int x,y;
+//		String nom;
+//		salida=new String();
+//		boolean ejecutar  = true;
+//		boolean posible;
+//			
+//	}
+//
+//	{
+//		(
+//		  (
+//		   posible = simpleCommand(ejecutar)
+//		| <DEFPROC><STR> (("("((<STR>|<NUM>)(","(<STR>|<NUM>))*)*")")|("()"))  "{"block(ejecutar)"}"
+//		| 	<DEFVAR>nom=nombre()x=num()
+//		{ variables.put(nom,x);
+//		  salida="Command: definir variable ";
+//		 }
+//		| conditional()
+//		| "{"block(ejecutar)"}"
+//		| repeatTimes()
+//		| loop(ejecutar)
+//
+//		) 
+//
+//		{
+//		    try {
+//	    			 Thread.sleep(900);
+//	    	    } catch (InterruptedException e) {
+//	    			        System.err.format("IOException: %s%n", e);
+//	    		    }
+//	    			 
+//			sistema.printOutput(salida);
+//			return true;
+//		})+
+//
+//    	| <EOF> {return false;} 
+//	}
+//
+//void block(boolean ejecutar):
+//	{	
+//		
+//		int x,y;
+//		boolean posible;
+//	}
+//
+//	{
+//		(
+//		  (
+//		    posible = simpleCommand(ejecutar)
+//		  | conditional()
+//		  | loop(ejecutar)
+//		  | repeatTimes()
+//		  ) 
+//
+//		{
+//		    try {
+//	    			 Thread.sleep(900);
+//	    	    } catch (InterruptedException e) {
+//	    			        System.err.format("IOException: %s%n", e);
+//	    		    } 	
+//		})
+//		(";"(
+//		    posible = simpleCommand(ejecutar)
+//		  | conditional()
+//		  | loop(ejecutar)
+//		  | repeatTimes()
+//		  )
+//		)*
+// 
+//	}
+//
+//
+//
+//void pruebas():
+//	{
+//	 int x;
+//	 String nom;
+//	}
+//	{
+//	  nom=nombre(){salida= nom;}
+//	}
+//
+//
+//
+//boolean jump(boolean ejecutar):
+//	{
+//	  int x,y;
+//	  String nom;
+//	  String nom2;
+//	  boolean posible = true;
+//	  String img;
+//	}
+//	{
+//	  x=num() "," y=num()
+//	  {
+//	    if(ejecutar) {
+//	      try { 
+//	    	world.setPostion(x,y);salida = "Command: Jump";
+//	   		}
+//	    	
+//	    catch(Error e) {
+//	      posible = false;
+//	      salida = "Comando no ejecutable\n"+e;
+//	      }
+//	    	}
+//	    return posible;
+//	   }
+//	   
+//	| nom=nombre() "," nom2=nombre()
+//	{
+//		boolean isVarDef1 = variables.containsKey(nom);
+//		boolean isVarDef2 = variables.containsKey(nom2);
+//		if(ejecutar) { 
+//		try { 
+//			if (isVarDef1 && isVarDef2)
+//				{
+//				  world.setPostion(variables.get(nom),variables.get(nom2));salida = "Command: Jump";
+//				}
+//			else
+//				{  
+//				salida = "Error. Variable no definida"; }
+//				}
+//		catch(Error e) {
+//		  posible = false;
+//	      salida = "Comando no ejecutable\n"+ e;
+//			}
+//		}
+//	return posible;
+//	}
+//	
+//	}
+//
+//void walk():
+//	{
+//	  int x;
+//	  boolean facing;
+//	  boolean posible;
+//	  boolean ejecutar = true;
+//	}
+//	{
+//	  x=num()
+//	 (
+//	   (")"
+//	   
+//	   { if(ejecutar) { 
+//		try { 
+//	     world.moveForward(x,false);salida = "Command: Walk";}
+//
+//		catch(Error e) {
+//		  posible = false;
+//		  salida = "Comando no ejecutable";
+//		}
+//	     }
+//		//return posible;
+//		}
+//		)
+//	 | 
+//	   (
+//	   ","
+//	   (
+//	     <FRONT>
+//	     { if(ejecutar) { 
+//			try { 
+//	       world.moveForward(x, false);salida = "Command: Walk F"; }
+//	       
+//	       catch(Error e) {
+//	        posible = false;
+//		  	salida = "Comando no ejecutable";
+//	       }
+//	     }
+//	     }
+//
+//
+//	     
+//	   | <BACK>{world.moveForward(-x, false);salida = "Command: Walk B";}
+//	   | <RIGHT>{world.moveHorizontally(x, false);salida = "Command: Walk R";}
+//	   | <LEFT> {world.moveHorizontally(-x, false);salida = "Command: Walk L"; }
+//	   
+//	   | <NORTH>
+//	   { facing = world.facingNorth();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingNorth();
+//	   		}
+//	     world.moveForward(x, false);
+//	     salida = "Command: Walk N";
+//	     }
+//	   | <SOUTH>
+//	   { facing = world.facingSouth();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingSouth();
+//	   		}
+//	     world.moveForward(x, false);
+//	     salida = "Command: Walk S";
+//	     }
+//	   |<EAST>
+//	   { facing = world.facingEast();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingEast();
+//	   		}
+//	     world.moveForward(x, false);
+//	     salida = "Command: Walk E";
+//	     }
+//	   | <WEST>
+//	   { facing = world.facingWest();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingWest();
+//	   		}
+//	     world.moveForward(x, false);
+//	     salida = "Command: Walk W";
+//	     }
+//	   )")"
+//	  
+//	  )
+//	  )
+//	}
+//
+//
+//void leap():
+//{
+//	  int x;
+//	  boolean facing;
+//	}
+//	{
+//	  x=num()
+//	 (
+//	   (")"{world.moveForward(x,true);salida = "Command: Leap";})
+//	 | 
+//	   (
+//	   ","
+//	   (
+//	     <FRONT>{world.moveForward(x, true);salida = "Command: Leap F";}
+//	   | <BACK>{world.moveForward(-x, true);salida = "Command: Leap B";}
+//	   | <RIGHT>{world.moveHorizontally(x, true);salida = "Command: Leap R";}
+//	   | <LEFT> {world.moveHorizontally(-x, true);salida = "Command: Leap L"; }
+//	   
+//	   | <NORTH>
+//	   { facing = world.facingNorth();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingNorth();
+//	   		}
+//	     world.moveForward(x, true);
+//	     salida = "Command: Leap N";
+//	     }
+//	   | <SOUTH>
+//	   { facing = world.facingSouth();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingSouth();
+//	   		}
+//	     world.moveForward(x, true);
+//	     salida = "Command: Leap S";
+//	     }
+//	   |<EAST>
+//	   { facing = world.facingEast();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingEast();
+//	   		}
+//	     world.moveForward(x, true);
+//	     salida = "Command: Leap E";
+//	     }
+//	   | <WEST>
+//	   { facing = world.facingWest();
+//	 	while(facing == false)
+//	 		{world.turnRight();
+//	    	facing = world.facingWest();
+//	   		}
+//	     world.moveForward(x, true);
+//	     salida = "Command: Leap W";
+//	     }
+//	   )")"
+//	  
+//	  )
+//	  )
+//	}
+//
+//
+//
+//boolean turn(boolean ejecutar):
+//	{
+//	  boolean posible = true;
+//	  }
+//	{
+//	 <RIGHT>
+//	 { if(ejecutar) { 
+//	   	world.turnRight();salida = "Command: turn R";
+//		}
+//	return posible;
+//	   }
+//
+//	 
+//	| <LEFT>
+//	{ if(ejecutar) { 
+//	  world.turnRight();world.turnRight();world.turnRight();
+//	  salida = "Command: turn L"; }
+//	  return posible;
+//	  }  
+//	}
+//
+//boolean turnTo(boolean ejecutar):
+//	{boolean facing;
+//	boolean posible= true;
+//	}
+//	{
+//	 
+//	 <NORTH>
+//	 {
+//	   if (ejecutar) { 
+//	   facing = world.facingNorth();
+//	 while(facing == false)
+//	 {	world.turnRight();
+//	    facing = world.facingNorth();
+//	   }
+//	 salida = "Command: turnTo N";
+//		}
+//	return posible;
+//	 }
+//	 
+//	| <SOUTH>
+//	{if (ejecutar) { 
+//	  facing = world.facingSouth();
+//	 while(facing == false)
+//	 {	world.turnRight();
+//	    facing = world.facingSouth();
+//	   }
+//	 salida = "Command: turnTo S"; }
+//	 return posible;
+//	 }
+//	 
+//	| <EAST>
+//	{if (ejecutar) {
+//	  facing = world.facingEast();
+//		 while(facing == false)
+//		 {	world.turnRight();
+//		    facing = world.facingEast();
+//		   }
+//		 salida = "Command: turnTo E"; }
+//	return posible;
+//	}
+//		 
+//	| <WEST>
+//	{if (ejecutar) { 
+//	  facing = world.facingWest();
+//		 while(facing == false)
+//		 {	world.turnRight();
+//		    facing = world.facingWest();
+//		   }
+//		 salida = "Command: turnTo W"; }
+//	return posible;
+//	}
+//	 }
+//
+//
+//boolean drop(boolean ejecutar):
+//	{ int x=1;
+//	 String nom;
+//	 boolean posible = true;
+//	}
+//	{
+//	 x=num()
+//	 {if (ejecutar) {
+//	   try { 
+//	      world.putChips(x);salida = "Command: Drop Chips"; }
+//	   catch(Error e) {
+//		  posible = false;
+//		  salida = "Comando no ejecutable\n"+e;
+//		}
+//	   }
+//	 return posible;
+//	  }
+//
+//	 
+//	| nom=nombre()
+//		{	if(ejecutar) { 
+//			boolean isVarDef1 = variables.containsKey(nom);
+//			if (isVarDef1)
+//				{try
+//				  { 
+//				  world.putChips(variables.get(nom));salida = "Command: Drop Chips";
+//				   }
+//				 catch(Error e) {
+//				   posible = false;
+//		  		   salida = "Comando no ejecutable\n"+e;
+//				 }
+//				}
+//			else
+//			{
+//			salida= "Error. Variable no definida";
+//			}
+//			}
+//		 return posible;
+//		}
+//		 
+//	}
+//
+//boolean get(boolean ejecutar):
+//	{ int x=1;
+//	  boolean posible = true;
+//	}
+//	{
+//	 x=num()
+//	 { if(ejecutar) {
+//	   try { 
+//	   world.pickChips(x);salida = "Command: Pick chips"; }
+//	   catch(Error e) {
+//	     posible = false;
+//		 salida = "Comando no ejecutable\n"+e;
+//	     }
+//	    }
+//	  return posible;
+//	 }  
+//	}
+//
+//boolean grab(boolean ejecutar):
+//	{ int f=1;
+//	boolean posible = true;
+//	}
+//	{
+//	 f=num()
+//	 {if(ejecutar) {
+//	   try {
+//	     world.grabBalloons(f);salida="Command:  Pick balloons";
+//	   }
+//	   catch(Error e) {
+//	     posible = false;
+//		 salida = "Comando no ejecutable\n"+e;
+//	      }
+//	    }
+//	  return posible;
+//	  }  
+//	}
+//
+//boolean letGo(boolean ejecutar):
+//	{ int f=1;
+//	  boolean posible = true;
+//	}
+//	{
+//	 f=num()
+//	 {if(ejecutar) { 
+//	   try { 
+//	   world.putBalloons(f); salida = "Command: Put Balloons"; }
+//	   catch(Error e) {
+//	     posible = false;
+//		 salida = "Comando no ejecutable\n"+e;
+//	      }
+//	   }
+//	  return posible;
+//	 }
+//	 
+//	}
+//
+//boolean facing():
+//	{
+//	}
+//	{
+//	  < NORTH >
+//	  {return world.facingNorth();}
+//	  |<SOUTH>
+//	  {return world.facingSouth();}
+//	  | <EAST>
+//	  {return world.facingEast();}
+//	  | <WEST>
+//	  {return world.facingWest();}
+//
+//	}
+//
+//boolean can():
+//	{
+//	  boolean ejecutar = true;
+//	  boolean posible;
+//	}
+//	{
+//	  posible = simpleCommand(ejecutar)
+//	  {
+//	    return posible;
+//	    }
+//	}
+//
+//boolean not():
+//	{
+//	   boolean verificar;
+//	}
+//	{
+//	  <FACING>"("verificar=facing()")"
+//	  {if(verificar == false) {
+//	    verificar = true;}
+//	   else { verificar = false;}
+//	    return verificar;
+//	    }
+//	    
+//	  |<CAN>"(" verificar=can() ")"
+//	  {if(verificar == false) {
+//	    verificar = true;
+//	    }
+//	    else { verificar = false;}
+//	    return verificar;
+//	    }
+//	}
+//
+//boolean condition():
+//	{
+//	  boolean verificar = false;
+//	}
+//	{
+//	  <FACING>"("verificar = facing()")"
+//	  {return verificar;}
+//	    
+//	| <CAN>"(" verificar = can() ")"
+//	  {return verificar;}
+//	  
+//	|  < NOT >":"verificar = not()
+//	{return verificar;}
+//	
+//	}
+//
+//void conditional():
+//	{
+//	  boolean verCond = false;
+//	  boolean opuesto = true;
+//	}
+//	{
+//	  <IF> verCond=condition() "{"block(verCond)"}"
+//	  {if(verCond == true) {
+//	    salida = "condicion verdadera";
+//	    opuesto = false;
+//	    }
+//	    else {
+//	      salida = "condicion falsa";
+//	      opuesto = true;
+//	    }
+//	    }
+//	    < ELSE > "{"block(opuesto)"}"
+//	}
+//
+//
+//void loop(boolean ejecutar):
+//	{
+//	  boolean seguir;
+//	  boolean exe = false;
+//	}
+//	{
+//	  <WHILE>seguir=condition()
+//	  {while (seguir) { 
+//	    exe = true;
+//	     }
+//	    }
+//	   
+//	   "{"block(exe)"}"
+//	}
+//
+//void repeatTimes():
+//	{
+//	  int x;
+//	}
+//	{
+//	  <REPEAT>x = num()<TIMES>"{" block(false)"}"
+//	  
+//	}
+//
+//boolean simpleCommand(boolean ejecutar):
+//	{
+//	  int x,y;
+//	  boolean posible = true;
+//	}
+//	{
+//	  (
+//	    <JUMP>  "(" posible = jump(ejecutar)")"
+//		| <WALK> "(" walk()
+//		| <LEAP> "(" leap()
+//		| 	<TURN>  "(" posible = turn(ejecutar)")"
+//		| 	<TURNTO>  "(" posible = turnTo(ejecutar) ")"
+//		| 	<DROP>  "(" posible = drop(ejecutar) ")"
+//		| 	<GET>  "(" posible = get(ejecutar) ")"
+//		| 	<GRAB>  "(" posible = grab(ejecutar) ")"
+//		| 	<LETGO>  "(" posible = letGo(ejecutar) ")"
+//		| 	<NOP>  ("()"|"(" ")") {posible = true;}
+//		| <STR>"="x = num()
+//		)
+//		{
+//		  return posible;
+//		}
+//		//| <TEST>  "(" pruebas() ")"
+//	}
+//
+//
+//
+//	/**
+//	
+//	 * Unsigned decimal number
+//	 * @return the corresponding value of the string
+//	 * @error  corresponding value is too large
+//	 */
+//
+//int num() throws Error:
+//	{	
+//		int total=1;
+//	}
+//	{
+//		<NUM>
+//		{
+//			try 
+//			{
+//				total = Integer.parseInt(token.image);
+//			} 
+//			catch (NumberFormatException ee) 
+//			{
+//				throw new Error("Number out of bounds: "+token.image+" !!");
+//			}
+//			return total;
+//		}
+//	}
+//
+//String nombre():
+//{
+//  String tNom;
+//}
+//{
+//  <STR>
+//	{ tNom = token.image; 
+//	  return tNom; }
+//}
+//
+//	
+
+
 /*
 Gramatica para el Robot:
 Autor: Alejandro Arango
@@ -134,7 +888,7 @@ boolean command(Console sistema): //command es nuestro main
 		(
 		  (
 		   posible = simpleCommand(ejecutar)
-		| <DEFPROC><STR> (("("((<STR>|<NUM>)(","(<STR>|<NUM>))*)*")")|("()"))  "{"block(ejecutar)"}"
+		| <DEFPROC>defProc(ejecutar)
 		| 	<DEFVAR>nom=nombre()x=num()
 		{ variables.put(nom,x);
 		  salida="Command: definir variable ";
@@ -187,37 +941,33 @@ void block(boolean ejecutar):
 		  | conditional()
 		  | loop()
 		  | repeatTimes()
-		  )		)*
+		  )
+		)*
  
 	}
 
 
 
-void pruebas():
+void defProc(boolean ejecutar):
 	{
 	 int x;
 	 String nom;
 	}
-	{
-	  nom=nombre(){salida= nom;}
-	}
-
+	{nom=nombre() (("("(x=valor()(","x=valor())*)*")")|("()"))  "{"block(ejecutar)"}" }
 
 
 boolean jump(boolean ejecutar):
 	{
 	  int x,y;
-	  String nom;
-	  String nom2;
 	  boolean posible = true;
-	  String img;
 	}
 	{
-	  x=num() "," y=num()
-	  {
-	    if(ejecutar) {
-	      try { 
-	    	world.setPostion(x,y);salida = "Command: Jump";
+	  x=valor() "," y=valor()
+	  {if(ejecutar) {
+	      try {
+	        if(x!= -1 && y!=-1) { 
+	    	world.setPostion(x,y);salida = "Command: Jump"; }
+	    	else { salida= "Variable no definida";}
 	   		}
 	    	
 	    catch(Error e) {
@@ -226,177 +976,222 @@ boolean jump(boolean ejecutar):
 	      }
 	    	}
 	    return posible;
-	   }
-	   
-	| nom=nombre() "," nom2=nombre()
-	{
-		boolean isVarDef1 = variables.containsKey(nom);
-		boolean isVarDef2 = variables.containsKey(nom2);
-		if(ejecutar) { 
-		try { 
-			if (isVarDef1 && isVarDef2)
-				{
-				  world.setPostion(variables.get(nom),variables.get(nom2));salida = "Command: Jump";
-				}
-			else
-				{  
-				salida = "Error. Variable no definida"; }
-				}
-		catch(Error e) {
-		  posible = false;
-	      salida = "Comando no ejecutable\n"+ e;
-			}
-		}
-	return posible;
-	}
+	     }
+	  
 	
 	}
 
-void walk():
+boolean walk(boolean ejecutar):
 	{
-	  int x;
+	  int x=0;
 	  boolean facing;
-	  boolean posible;
-	  boolean ejecutar = true;
+	  boolean posible= true;
+	  String command = "";
 	}
 	{
-	  x=num()
-	 (
-	   (")"
-	   
-	   { if(ejecutar) { 
-		try { 
-	     world.moveForward(x,false);salida = "Command: Walk";}
-
+	  x = valor(){command = "front";}
+		(","(<FRONT> {command = "front";}
+	 | <BACK>{command = "back";}
+	 | <RIGHT >{command = "right";}
+	 | <LEFT>{command = "left";}
+	 | <NORTH >{command = "north";}
+	 | <SOUTH>{command = "south";}
+	 |<EAST>{command = "east";}
+	 | <WEST>{command = "west";}
+	 ))?
+	 {if(ejecutar) {
+	   if(x== -1) {salida="variable no definida";}
+	   else if(command == "front") {
+	     try { 
+	     world.moveForward(x,false);salida = "Command: Walk F";}
 		catch(Error e) {
 		  posible = false;
-		  salida = "Comando no ejecutable";
-		}
+		  salida = "Comando no ejecutable\n"+e; }
+		  }
+		else if(command == "back") {
+	     try { 
+	     world.moveForward(-x,false);salida = "Command: Walk B";}
+		catch(Error e) {
+		  posible = false;
+		  salida = "Comando no ejecutable\n"+e; }
 	     }
-		//return posible;
-		}
-		)
-	 | 
-	   (	   ","
-	   (
-	     <FRONT>
-	     { if(ejecutar) { 
-			try { 
-	       world.moveForward(x, false);salida = "Command: Walk F"; }
-	       
-	       catch(Error e) {
-	        posible = false;
-		  	salida = "Comando no ejecutable";
-	       }
+	     else if(command == "right") {
+	     try { 
+	     world.moveHorizontally(x,false);salida = "Command: Walk R";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
 	     }
+	      else if(command == "left") {
+	     try { 
+	     world.moveHorizontally(-x,false);salida = "Command: Walk L";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
 	     }
-
-
-	     
-	   | <BACK>{world.moveForward(-x, false);salida = "Command: Walk B";}
-	   | <RIGHT>{world.moveHorizontally(x, false);salida = "Command: Walk R";}
-	   | <LEFT> {world.moveHorizontally(-x, false);salida = "Command: Walk L"; }
-	   
-	   | <NORTH>
-	   { facing = world.facingNorth();
+	     else if(command == "north") {
+	     try { 
+	     facing = world.facingNorth();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingNorth();
 	   		}
 	     world.moveForward(x, false);
-	     salida = "Command: Walk N";
+	     salida = "Command: Walk N";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
 	     }
-	   | <SOUTH>
-	   { facing = world.facingSouth();
+	     else if(command == "south") {
+	     try { 
+	     facing = world.facingSouth();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingSouth();
 	   		}
 	     world.moveForward(x, false);
-	     salida = "Command: Walk S";
+	     salida = "Command: Walk S";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
 	     }
-	   |<EAST>
-	   { facing = world.facingEast();
+	      else if(command == "east") {
+	     try { 
+	     facing = world.facingEast();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingEast();
 	   		}
 	     world.moveForward(x, false);
-	     salida = "Command: Walk E";
+	     salida = "Command: Walk E";}
+		catch(Error e) {
+		  posible = false;
+		  salida = "Comando no ejecutable\n"+e; }
 	     }
-	   | <WEST>
-	   { facing = world.facingWest();
+	     else if(command == "west") {
+	     try { 
+	     facing = world.facingWest();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingWest();
 	   		}
 	     world.moveForward(x, false);
-	     salida = "Command: Walk W";
-	     }	   )")"
-	  
-	  )
-	  )
+	     salida = "Command: Walk W";}
+		catch(Error e) {
+		  posible = false;
+		  salida = "Comando no ejecutable\n"+e; }
+	     }
+	 }
+	   return posible;
+	   }
+	 
 	}
 
 
-void leap():
-{
-	  int x;
+boolean leap(boolean ejecutar):
+	{
+	  int x=0;
 	  boolean facing;
+	  boolean posible= true;
+	  String command = "";
 	}
 	{
-	  x=num()
-	 (
-	   (")"{world.moveForward(x,true);salida = "Command: Leap";})
-	 | 
-	   (
-	   ","
-	   (
-	     <FRONT>{world.moveForward(x, true);salida = "Command: Leap F";}
-	   | <BACK>{world.moveForward(-x, true);salida = "Command: Leap B";}
-	   | <RIGHT>{world.moveHorizontally(x, true);salida = "Command: Leap R";}
-	   | <LEFT> {world.moveHorizontally(-x, true);salida = "Command: Leap L"; }
-	   
-	   | <NORTH>
-	   { facing = world.facingNorth();
+	  x = valor(){command = "front";}
+		(","(<FRONT> {command = "front";}
+	 | <BACK>{command = "back";}
+	 | <RIGHT >{command = "right";}
+	 | <LEFT>{command = "left";}
+	 | <NORTH >{command = "north";}
+	 | <SOUTH>{command = "south";}
+	 |<EAST>{command = "east";}
+	 | <WEST>{command = "west";}
+	 ))?
+	 {if(ejecutar) {
+	   if(x== -1) {salida="variable no definida";}
+	   else if(command == "front") {
+	     try { 
+	     world.moveForward(x,true);salida = "Command: Walk F";}
+		catch(Error e) {
+		  posible = false;
+		  salida = "Comando no ejecutable\n"+e; }
+		  }
+		else if(command == "back") {
+	     try { 
+	     world.moveForward(-x,true);salida = "Command: Walk B";}
+		catch(Error e) {
+		  posible = false;
+		  salida = "Comando no ejecutable\n"+e; }
+	     }
+	     else if(command == "right") {
+	     try { 
+	     world.moveHorizontally(x,true);salida = "Command: Walk R";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
+	     }
+	      else if(command == "left") {
+	     try { 
+	     world.moveHorizontally(-x,true);salida = "Command: Walk L";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
+	     }
+	     else if(command == "north") {
+	     try { 
+	     facing = world.facingNorth();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingNorth();
 	   		}
 	     world.moveForward(x, true);
-	     salida = "Command: Leap N";
+	     salida = "Command: Walk N";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
 	     }
-	   | <SOUTH>
-	   { facing = world.facingSouth();
+	     else if(command == "south") {
+	     try { 
+	     facing = world.facingSouth();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingSouth();
 	   		}
 	     world.moveForward(x, true);
-	     salida = "Command: Leap S";
+	     salida = "Command: Walk S";}
+		catch(Error e) {
+		  posible = false;
+		 salida = "Comando no ejecutable\n"+e; }
 	     }
-	   |<EAST>
-	   { facing = world.facingEast();
+	      else if(command == "east") {
+	     try { 
+	     facing = world.facingEast();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingEast();
 	   		}
 	     world.moveForward(x, true);
-	     salida = "Command: Leap E";
+	     salida = "Command: Walk E";}
+		catch(Error e) {
+		  posible = false;
+		  salida = "Comando no ejecutable\n"+e; }
 	     }
-	   | <WEST>
-	   { facing = world.facingWest();
+	     else if(command == "west") {
+	     try { 
+	     facing = world.facingWest();
 	 	while(facing == false)
 	 		{world.turnRight();
 	    	facing = world.facingWest();
 	   		}
 	     world.moveForward(x, true);
-	     salida = "Command: Leap W";
+	     salida = "Command: Walk W";}
+		catch(Error e) {
+		  posible = false;
+		  salida = "Comando no ejecutable\n"+e; }
 	     }
-	   )")"
-	  
-	  )
-	  )
+	 }
+	   return posible;
+	   }
+	 
 	}
 
 
@@ -520,6 +1315,7 @@ boolean drop(boolean ejecutar):
 
 boolean get(boolean ejecutar):
 	{ int x=1;
+	  String nom;
 	  boolean posible = true;
 	}
 	{
@@ -533,11 +1329,32 @@ boolean get(boolean ejecutar):
 	     }
 	    }
 	  return posible;
-	 }  
+	 }
+	 | nom=nombre()
+		{	if(ejecutar) { 
+			boolean isVarDef1 = variables.containsKey(nom);
+			if (isVarDef1)
+				{try
+				  { 
+				  world.pickChips(variables.get(nom));salida = "Command: Pick chips";
+				   }
+				 catch(Error e) {
+				   posible = false;
+		  		   salida = "Comando no ejecutable\n"+e;
+				 }
+				}
+			else
+			{
+			salida= "Error. Variable no definida";
+			}
+			}
+		 return posible;
+		} 
 	}
 
 boolean grab(boolean ejecutar):
 	{ int f=1;
+	String nom;
 	boolean posible = true;
 	}
 	{
@@ -552,11 +1369,32 @@ boolean grab(boolean ejecutar):
 	      }
 	    }
 	  return posible;
-	  }  
+	  }
+		| nom=nombre()
+		{	if(ejecutar) { 
+			boolean isVarDef1 = variables.containsKey(nom);
+			if (isVarDef1)
+				{try
+				  { 
+				  world.grabBalloons(variables.get(nom));salida = "Command:  Pick balloons";
+				   }
+				 catch(Error e) {
+				   posible = false;
+		  		   salida = "Comando no ejecutable\n"+e;
+				 }
+				}
+			else
+			{
+			salida= "Error. Variable no definida";
+			}
+			}
+		 return posible;
+		}
 	}
 
 boolean letGo(boolean ejecutar):
 	{ int f=1;
+	String nom;
 	  boolean posible = true;
 	}
 	{
@@ -571,6 +1409,26 @@ boolean letGo(boolean ejecutar):
 	   }
 	  return posible;
 	 }
+	 | nom=nombre()
+		{	if(ejecutar) { 
+			boolean isVarDef1 = variables.containsKey(nom);
+			if (isVarDef1)
+				{try
+				  { 
+				  world.putBalloons(variables.get(nom));salida = "Command: Put Balloons";
+				   }
+				 catch(Error e) {
+				   posible = false;
+		  		   salida = "Comando no ejecutable\n"+e;
+				 }
+				}
+			else
+			{
+			salida= "Error. Variable no definida";
+			}
+			}
+		 return posible;
+		}
 	 
 	}
 
@@ -680,16 +1538,17 @@ boolean simpleCommand(boolean ejecutar):
 	  boolean posible = true;
 	}
 	{
-	  (	    <JUMP>  "(" posible = jump(ejecutar)")"
-		| <WALK> "(" walk()
-		| <LEAP> "(" leap()
+	  (
+	    <JUMP>  "(" posible = jump(ejecutar)")"
+		| <WALK> "(" posible =walk(ejecutar)")"
+		| <LEAP> "(" posible=leap(ejecutar)")"
 		| 	<TURN>  "(" posible = turn(ejecutar)")"
 		| 	<TURNTO>  "(" posible = turnTo(ejecutar) ")"
 		| 	<DROP>  "(" posible = drop(ejecutar) ")"
 		| 	<GET>  "(" posible = get(ejecutar) ")"
 		| 	<GRAB>  "(" posible = grab(ejecutar) ")"
 		| 	<LETGO>  "(" posible = letGo(ejecutar) ")"
-		| 	<NOP>  ("()"|"(" ")") {posible = true;}
+		| 	<NOP>  ("()"|"(" ")")
 		| <STR>"="x = num()
 		)
 		{
@@ -762,5 +1621,25 @@ String nombre():
 	{ tNom = token.image; 
 	  return tNom; }
 }
+
+int valor():
+{
+  int x=0;
+  String nom="";
+  int value;
+}
+{
+  (nom=nombre()|x=num())
+  {boolean isVarDef=variables.containsKey(nom);
+   if (isVarDef) {
+     value = variables.get(nom);}
+   else if(x != 0){ value = x;}
+   else { value = -1; }
+   return value;
+  }
+}
+	
+
+
 
 	
