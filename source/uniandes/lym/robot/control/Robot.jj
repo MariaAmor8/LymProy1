@@ -785,7 +785,8 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
-import java.util.HashMap; 
+import java.util.HashMap;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class Robot 
@@ -801,7 +802,7 @@ public class Robot
 
 	String salida=new String();
 	HashMap<String, Integer> variables = new HashMap<>();
-	HashMap<String, Integer> defProc = new HashMap<>();
+	HashMap<String, ArrayList<String>> defProc = new HashMap<>();
 }
 PARSER_END(Robot)
 
@@ -948,12 +949,30 @@ void block(boolean ejecutar):
 
 
 
+//void defProc(boolean ejecutar):
+//	{
+//	 int x;
+//	 String nom;
+//	}
+//	{nom=nombre() (("("(x=valor()(","x=valor())*)*")")|("()"))  "{"block(ejecutar)"}" }
 void defProc(boolean ejecutar):
-	{
-	 int x;
-	 String nom;
-	}
-	{nom=nombre() (("("(x=valor()(","x=valor())*)*")")|("()"))  "{"block(ejecutar)"}" }
+ {
+  int x;
+  String nom;
+ ArrayList<String> value = new ArrayList<String>();
+ }
+ {
+ nom=nombre()"("
+         (        ")"
+   |
+   (<STR>
+     { value.add(token.image);})
+   ("," <STR>
+     { value.add(token.image);})*
+    )")"
+
+    {defProc.put(nom, value);}
+  	"{"block(false)"}" }
 
 
 boolean jump(boolean ejecutar):
@@ -977,8 +996,6 @@ boolean jump(boolean ejecutar):
 	    	}
 	    return posible;
 	     }
-	  
-	
 	}
 
 boolean walk(boolean ejecutar):

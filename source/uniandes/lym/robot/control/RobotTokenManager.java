@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /** Token Manager. */
 @SuppressWarnings ("unused")
@@ -98,13 +99,13 @@ private int jjMoveStringLiteralDfa0_0(){
    {
       case 40:
          jjmatchedKind = 41;
-         return jjMoveStringLiteralDfa1_0(0x100000000000L);
+         return jjMoveStringLiteralDfa1_0(0x200000000000L);
       case 41:
-         return jjStopAtPos(0, 43);
-      case 44:
          return jjStopAtPos(0, 42);
+      case 44:
+         return jjStopAtPos(0, 43);
       case 58:
-         return jjStopAtPos(0, 45);
+         return jjStopAtPos(0, 44);
       case 59:
          return jjStopAtPos(0, 40);
       case 61:
@@ -168,8 +169,8 @@ private int jjMoveStringLiteralDfa1_0(long active0){
    switch(curChar)
    {
       case 41:
-         if ((active0 & 0x100000000000L) != 0L)
-            return jjStopAtPos(1, 44);
+         if ((active0 & 0x200000000000L) != 0L)
+            return jjStopAtPos(1, 45);
          break;
       case 65:
       case 97:
@@ -554,7 +555,7 @@ public static final String[] jjstrLiteralImages = {
 "", null, null, null, null, null, null, null, null, null, null, null, null, 
 null, null, null, null, null, null, null, null, null, null, null, null, null, null, 
 null, null, null, null, null, null, null, null, null, null, null, "\173", "\175", 
-"\73", "\50", "\54", "\51", "\50\51", "\72", "\75", };
+"\73", "\50", "\51", "\54", "\72", "\50\51", "\75", };
 protected Token jjFillToken()
 {
    final Token t;
